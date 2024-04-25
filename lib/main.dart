@@ -29,13 +29,37 @@ class _MyHomePageState extends State<MyHomePage> {
   // Model member = member();
   // last list<Member> member;
   final List<Map<String, dynamic>> orders = [
-    {"name": "บาท", "amount": "23,400"},
-    {"name": "บาท", "amount": "15,900"},
-    {"name": "บาท", "amount": "13,750"},
-    {"name": "บาท", "amount": "15,900"},
-    {"name": "บาท", "amount": "13,750"},
+    {
+      "name": "นาย",
+      "amount": "23,400",
+      "imageUrl": "Style/img.png",
+      "phone": "099999999"
+    },
+    {
+      "name": "บอล",
+      "amount": "15,900",
+      "imageUrl": "Style/img.png",
+      "phone": "099999999"
+    },
+    {
+      "name": "โอ๊ค",
+      "amount": "13,750",
+      "imageUrl": "Style/img.png",
+      "phone": "099999999"
+    },
+    {
+      "name": "นาตาลี",
+      "amount": "9,500",
+      "imageUrl": "Style/img.png",
+      "phone": "099999999"
+    },
+    {
+      "name": "ฮาร์ท",
+      "amount": "8,100",
+      "imageUrl": "Style/img.png",
+      "phone": "099999999"
+    },
     // Add more items...
-
   ];
 
   // @override
@@ -149,35 +173,41 @@ class _MyHomePageState extends State<MyHomePage> {
                             backgroundColor: Colors.transparent,
                             radius: 40,
                             // Update the path to your image asset
-                            backgroundImage: AssetImage('Style/img.png'),
+                            backgroundImage: AssetImage(
+                              orders[index]['imageUrl'] ?? 'Style/image.png',
+                            ),
                           ),
                         ),
                         title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween, // This will space out the children across the Row
+                          mainAxisAlignment: MainAxisAlignment
+                              .spaceBetween, // This will space out the children across the Row
                           children: [
                             Text(
                               orders[index]['name'],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30 // Correct placement inside TextStyle
-                              ),
+                                  ),
                             ),
                             Text(
                               orders[index]['price'],
                               style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 20 // Optionally setting a fontSize for the price for consistent styling
-                              ),
+                                  ),
                             ),
                           ],
                         ),
-
-                        trailing: Icon(Icons.play_arrow, color: Colors.grey,),
+                        trailing: Icon(
+                          Icons.play_arrow,
+                          color: Colors.grey,
+                        ),
                         onTap: () {
                           // Navigate to the detail page
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => DetailPage()),
+                            MaterialPageRoute(
+                                builder: (context) => DetailPage()),
                           );
                         },
                       ),
