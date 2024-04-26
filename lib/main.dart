@@ -33,50 +33,58 @@ class _MyHomePageState extends State<MyHomePage> {
       "name": "นาย",
       "amount": "23,400",
       "imageUrl": "Style/img.png",
-      "phone": "099999999"
+      "phone": "099999999",
+      "status": "รอยืนยันออเดอร์"
     },
     {
       "name": "บอล",
       "amount": "15,900",
       "imageUrl": "Style/img.png",
-      "phone": "099999999"
+      "phone": "099999999",
+      "status": "รอยืนยันออเดอร์"
     },
     {
       "name": "โอ๊ค",
       "amount": "13,750",
       "imageUrl": "Style/img.png",
-      "phone": "099999999"
+      "phone": "099999999",
+      "status": "รอยืนยันออเดอร์"
     },
     {
       "name": "นาตาลี",
       "amount": "9,500",
       "imageUrl": "Style/img.png",
-      "phone": "099999999"
+      "phone": "099999999",
+      "status": "รอยืนยันออเดอร์"
     },
     {
       "name": "ฮาร์ท",
       "amount": "8,100",
       "imageUrl": "Style/img.png",
-      "phone": "099999999"
+      "phone": "099999999",
+      "status": "รอยืนยันออเดอร์"
     },
   ];
   String orderStatus = 'รอยืนยันออเดอร์';
 
-  Future<void> changeOrderStatus(String name, String amount) async {
+  Future<void> changeOrderStatus(int index) async {
+    // Passing the current order details to the DetailPage
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DetailPage(
-        name: name, // Use the name passed to the method
-        amount: amount, // Use the amount passed to the method
+        name: orders[index]['name'],
+        amount: orders[index]['amount'],
       )),
     );
 
+    // Using the index to update the status of the specific order
     if (result != null) {
       setState(() {
-        orderStatus = result;
+        orders[index]['status'] = result; // Assuming 'status' is a key in your order map
       });
     }
   }
+
   // void _updateStatus() async {
   //   final result = await Navigator.push(
   //     context,
@@ -123,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Align(
               // padding: const EdgeInsets.all(8.0),
               alignment: Alignment.centerLeft,
-            // padding: const EdgeInsets.symmetric(vertical: 100.0),
+              // padding: const EdgeInsets.symmetric(vertical: 100.0),
               child: Text(
                 '20 กุมภา',
                 style: TextStyle(
@@ -195,10 +203,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              orderStatus,
+                              orders[index]['status']?? 'Status Unknown',
                               style: TextStyle(
                                 fontSize: 20,
-                                color: orderStatus == 'ยกเลิก' ? Colors.red : orderStatus == 'รับออเดอร์' ? Colors.green : Colors.grey,
+                                color: orders[index]['status'] == 'ยกเลิก' ? Colors.red
+                                    : orders[index]['status'] == 'รับออเดอร์' ? Colors.green
+                                    : Colors.grey,
                               ),
                             ),
 
@@ -225,7 +235,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.grey,
                         ),
                         onTap: () {
-                          changeOrderStatus(orders[index]['name'], orders[index]['amount']);
+                          changeOrderStatus(index); // Pass the index of the tapped order
+                          // changeOrderStatus(orders[index]['name'], orders[index]['amount']);
                           // Navigator.push(
                           //   context,
                           //   MaterialPageRoute(
