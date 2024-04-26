@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
 
 void main() {
   runApp(MyApp());
@@ -24,10 +28,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Model menu = menu();
-  // Model date = date();
-  // Model member = member();
-  // last list<Member> member;
   final List<Map<String, dynamic>> orders = [
     {
       "name": "นาย",
@@ -59,48 +59,21 @@ class _MyHomePageState extends State<MyHomePage> {
       "imageUrl": "Style/img.png",
       "phone": "099999999"
     },
-    // Add more items...
   ];
+  String orderStatus = 'รอยืนยันออเดอร์';
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getData();
-  //   members=[
-  //     Member(
-  //       name: 'นาย',
-  //       phoneNumber:'099999999',
-  //       price:'23,400',
-  //       imageUrl'Style/img.png',
-  //     ),
-  //     Member(
-  //       name: 'บอล',
-  //       phoneNumber:'099999999',
-  //       price:'15,900',
-  //       imageUrl'Style/img.png',
-  //     ),
-  //     Member(
-  //       name: 'โอ๊ค',
-  //       phoneNumber:'099999999',
-  //       price:'13,750',
-  //       imageUrl'Style/img.png',
-  //     ),
-  //     Member(
-  //       name: 'นาตาลี',
-  //       phoneNumber:'099999999',
-  //       price:'9,500',
-  //       imageUrl'Style/img.png',
-  //     ),
-  //     Member(
-  //       name: 'ฮาร์ท',
-  //       phoneNumber:'099999999',
-  //       price:'8,100',
-  //       imageUrl'Style/img.png',
-  //     ),
-  //
-  //   ]
-  // }
+  Future<void> changeOrderStatus(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ChangeStatusPage()),
+    );
 
+    if (result != null) {
+      setState(() {
+        orderStatus = result;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,15 +100,19 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Container(
             width: double.infinity,
-            height: 40,
+            height: 60,
             color: Color(0xFFCBCDCA),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Align(
+              // padding: const EdgeInsets.all(8.0),
+              alignment: Alignment.centerLeft,
+            // padding: const EdgeInsets.symmetric(vertical: 100.0),
               child: Text(
                 '20 กุมภา',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
+                  color: Colors.black,
+                  // fontWeight: FontWeight.bold,
+                  fontSize: 20,
                 ),
               ),
             ),
@@ -148,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.white,
                   margin: EdgeInsets.zero,
                   child: SizedBox(
-                    height: 120,
+                    height: 150,
                     child: Container(
                       padding: EdgeInsets.only(top: 25),
                       decoration: BoxDecoration(
@@ -172,30 +149,58 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: CircleAvatar(
                             backgroundColor: Colors.transparent,
                             radius: 40,
-                            // Update the path to your image asset
                             backgroundImage: AssetImage(
-                              orders[index]['imageUrl'] ?? 'Style/image.png',
+                              orders[index]['imageUrl'],
                             ),
                           ),
                         ),
                         title: Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .spaceBetween, // This will space out the children across the Row
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               orders[index]['name'],
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30 // Correct placement inside TextStyle
-                                  ),
+                                  color: Colors.black,
+                                  fontSize: 25
+                              ),
                             ),
                             Text(
-                              orders[index]['price'],
+                              orders[index]['amount'],
                               style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 20 // Optionally setting a fontSize for the price for consistent styling
-                                  ),
+                                  color: Color(0xFFD57D2C),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30
+                              ),
                             ),
+                          ],
+                        ),
+                        subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              orderStatus,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: orderStatus == 'ยกเลิก' ? Colors.red : orderStatus == 'รับออเดอร์' ? Colors.green : Colors.grey,
+                              ),
+                            ),
+
+                            InkWell(
+                              onTap: () async{
+                                const imageUrl1 = 'Style/img_2.png';
+                                // var url = 'tel:${orders[index]['phone']}';
+                                if (await canLaunch(imageUrl1)) {
+                                  await launch(imageUrl1);
+                                }else{
+                                  print('Could not launch $imageUrl1');
+                                }
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.transparent,
+                                backgroundImage: AssetImage('Style/img_2.png'), // Update the asset path here
+                                radius: 20,
+                              ),
+                            )
                           ],
                         ),
                         trailing: Icon(
@@ -203,11 +208,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.grey,
                         ),
                         onTap: () {
-                          // Navigate to the detail page
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DetailPage()),
+                                builder: (context) => DetailPage(
+                                  name: orders[index]['name'],
+                                  amount: orders[index]['amount'],
+                                )),
                           );
                         },
                       ),
@@ -223,42 +230,126 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+class ChangeStatusPage extends StatelessWidget {
+  // Define your ChangeStatusPage widget here
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold();
+  }
+}
+
 class DetailPage extends StatelessWidget {
+  final String name;
+  final String amount;
+
+  DetailPage({required this.name, required this.amount});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail Page'),
+        title: Text(name),
         centerTitle: true,
         backgroundColor: Color(0xFFF1E4D0),
-      ),
-      body: Container(
-        width: double.infinity,
-        height: 40,
-        color: Color(0xFFCBCDCA),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '20 กุมภา',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                ),
-              ),
-              Spacer(),
-              Text(
-                '30',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                ),
-              ),
-            ],
+        actions: [
+          IconButton(
+            onPressed: () async {
+              const imageUrl1 = 'Style/img_2.png';
+              if (await canLaunch(imageUrl1)) {
+                await launch(imageUrl1);
+              } else {
+                print('Could not launch $imageUrl1');
+              }
+            },
+            icon: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              backgroundImage: AssetImage('Style/img_2.png'),
+              radius: 20,
+            ),
           ),
-        ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            height: 60,
+            color: Color(0xFFCBCDCA),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '20 กุมภา',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Spacer(),
+                  Text(
+                    amount + "-",
+                    style: TextStyle(
+                      color: Color(0xFFD57D2C),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Center(
+            child: Image.asset(
+              'Style/img_3.png',
+              height: 500,
+              width: 300,
+              fit: BoxFit.contain,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 50.0,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context, 'ยกเลิก'),
+                      child: Text('ยกเลิก'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black, // Button color
+                        foregroundColor: Colors.white, // Text color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20), // Border radius
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20), // Spacing between buttons
+                Expanded(
+                  child: SizedBox(
+                    height: 50.0,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context, 'รับออเดอร์'),
+                      child: Text('รับออเดอร์'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange, // Button color
+                        foregroundColor: Colors.white, // Text color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20), // Border radius
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
