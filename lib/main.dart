@@ -62,10 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
   String orderStatus = 'รอยืนยันออเดอร์';
 
-  Future<void> changeOrderStatus(BuildContext context) async {
+  Future<void> changeOrderStatus(String name, String amount) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ChangeStatusPage()),
+      MaterialPageRoute(builder: (context) => DetailPage(
+        name: name, // Use the name passed to the method
+        amount: amount, // Use the amount passed to the method
+      )),
     );
 
     if (result != null) {
@@ -74,6 +77,20 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+  // void _updateStatus() async {
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => DetailPage()),
+  //   );
+  //
+  //   if (result != null) {
+  //     setState(() {
+  //       orderStatus = result;
+  //     });
+  //   }
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -188,9 +205,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             InkWell(
                               onTap: () async{
                                 const imageUrl1 = 'Style/img_2.png';
-                                // var url = 'tel:${orders[index]['phone']}';
-                                if (await canLaunch(imageUrl1)) {
-                                  await launch(imageUrl1);
+                                var url = 'tel:${orders[index]['phone']}';
+                                if (await canLaunch(orders[index]['phone'])) {
+                                  await launch(orders[index]['phone']);
                                 }else{
                                   print('Could not launch $imageUrl1');
                                 }
@@ -208,14 +225,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.grey,
                         ),
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DetailPage(
-                                  name: orders[index]['name'],
-                                  amount: orders[index]['amount'],
-                                )),
-                          );
+                          changeOrderStatus(orders[index]['name'], orders[index]['amount']);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) => DetailPage(
+                          //         name: orders[index]['name'],
+                          //         amount: orders[index]['amount'],
+                          //       )
+                          //   ),
+                          // );
+
                         },
                       ),
                     ),
@@ -230,14 +250,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class ChangeStatusPage extends StatelessWidget {
-  // Define your ChangeStatusPage widget here
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
-  }
-}
-
+// class ChangeStatusPage extends StatelessWidget {
+//   // Define your ChangeStatusPage widget here
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold();
+//   }
+// }
+//
 class DetailPage extends StatelessWidget {
   final String name;
   final String amount;
@@ -335,7 +355,7 @@ class DetailPage extends StatelessWidget {
                     height: 50.0,
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context, 'รับออเดอร์'),
-                      child: Text('รับออเดอร์'),
+                      child: Text('รับออเดอร์',),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange, // Button color
                         foregroundColor: Colors.white, // Text color
@@ -354,3 +374,38 @@ class DetailPage extends StatelessWidget {
     );
   }
 }
+// class DetailPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Change Order Status'),
+//         backgroundColor: Color(0xFFF1E4D0),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             ElevatedButton(
+//               onPressed: () => Navigator.pop(context, 'รับออเดอร์'), // Confirm Order
+//               child: Text('Confirm Order'),
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: Colors.green,
+//                 foregroundColor: Colors.white,
+//               ),
+//             ),
+//             SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: () => Navigator.pop(context, 'ยกเลิก'), // Cancel Order
+//               child: Text('Cancel Order'),
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: Colors.red,
+//                 foregroundColor: Colors.white,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
