@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:io';
 
 void main() {
   runApp(MyApp());
@@ -68,7 +66,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String orderStatus = 'รอยืนยันออเดอร์';
 
   Future<void> changeOrderStatus(int index) async {
-    // Passing the current order details to the DetailPage
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DetailPage(
@@ -77,26 +74,12 @@ class _MyHomePageState extends State<MyHomePage> {
       )),
     );
 
-    // Using the index to update the status of the specific order
     if (result != null) {
       setState(() {
-        orders[index]['status'] = result; // Assuming 'status' is a key in your order map
+        orders[index]['status'] = result;
       });
     }
   }
-
-  // void _updateStatus() async {
-  //   final result = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => DetailPage()),
-  //   );
-  //
-  //   if (result != null) {
-  //     setState(() {
-  //       orderStatus = result;
-  //     });
-  //   }
-  // }
 
 
   @override
@@ -112,7 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
-            // Add action for menu button if needed
           },
           icon: Icon(
             Icons.menu,
@@ -129,14 +111,11 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Color(0xFFCBCDCA),
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Align(
-              // padding: const EdgeInsets.all(8.0),
               alignment: Alignment.centerLeft,
-              // padding: const EdgeInsets.symmetric(vertical: 100.0),
               child: Text(
                 '20 กุมภา',
                 style: TextStyle(
                   color: Colors.black,
-                  // fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
@@ -203,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              orders[index]['status']?? 'Status Unknown',
+                              orders[index]['status']?? 'รอยืนยันออเดอร์',
                               style: TextStyle(
                                 fontSize: 20,
                                 color: orders[index]['status'] == 'ยกเลิก' ? Colors.red
@@ -224,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               },
                               child: CircleAvatar(
                                 backgroundColor: Colors.transparent,
-                                backgroundImage: AssetImage('Style/img_2.png'), // Update the asset path here
+                                backgroundImage: AssetImage('Style/img_2.png'),
                                 radius: 20,
                               ),
                             )
@@ -235,18 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.grey,
                         ),
                         onTap: () {
-                          changeOrderStatus(index); // Pass the index of the tapped order
-                          // changeOrderStatus(orders[index]['name'], orders[index]['amount']);
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => DetailPage(
-                          //         name: orders[index]['name'],
-                          //         amount: orders[index]['amount'],
-                          //       )
-                          //   ),
-                          // );
-
+                          changeOrderStatus(index);
                         },
                       ),
                     ),
@@ -261,14 +229,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// class ChangeStatusPage extends StatelessWidget {
-//   // Define your ChangeStatusPage widget here
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold();
-//   }
-// }
-//
 class DetailPage extends StatelessWidget {
   final String name;
   final String amount;
@@ -349,12 +309,18 @@ class DetailPage extends StatelessWidget {
                     height: 50.0,
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context, 'ยกเลิก'),
-                      child: Text('ยกเลิก'),
+                      child: Text(
+                          'ยกเลิก',
+                          style: TextStyle(
+                            fontSize: 16,
+                            // fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black, // Button color
                         foregroundColor: Colors.white, // Text color
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // Border radius
+                          borderRadius: BorderRadius.circular(15), // Border radius
                         ),
                       ),
                     ),
@@ -366,12 +332,17 @@ class DetailPage extends StatelessWidget {
                     height: 50.0,
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context, 'รับออเดอร์'),
-                      child: Text('รับออเดอร์',),
+                      child: Text(
+                        'รับออเดอร์',
+                        style: TextStyle(
+                          fontSize: 16,
+                          // fontWeight: FontWeight.bold,
+                        ),),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange, // Button color
                         foregroundColor: Colors.white, // Text color
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // Border radius
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
@@ -385,38 +356,3 @@ class DetailPage extends StatelessWidget {
     );
   }
 }
-// class DetailPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Change Order Status'),
-//         backgroundColor: Color(0xFFF1E4D0),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             ElevatedButton(
-//               onPressed: () => Navigator.pop(context, 'รับออเดอร์'), // Confirm Order
-//               child: Text('Confirm Order'),
-//               style: ElevatedButton.styleFrom(
-//                 backgroundColor: Colors.green,
-//                 foregroundColor: Colors.white,
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () => Navigator.pop(context, 'ยกเลิก'), // Cancel Order
-//               child: Text('Cancel Order'),
-//               style: ElevatedButton.styleFrom(
-//                 backgroundColor: Colors.red,
-//                 foregroundColor: Colors.white,
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
